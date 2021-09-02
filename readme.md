@@ -1,5 +1,4 @@
 # Yeonsang Yoon's Study Space
-* * *
 
 ## 1. Algorithm
 
