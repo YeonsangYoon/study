@@ -9,7 +9,7 @@ vector<string> split(string s, char delim);
 - char delim : 구분 기호
 
 
-전체 코드
+> 전체 코드
 ```cpp
 #include <iostream>
 #include <vector>
