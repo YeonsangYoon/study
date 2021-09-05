@@ -40,7 +40,7 @@
     - double을 float으로 변환하면 숫자가 반올림된다.
     - long long을 int로 변환하면 상위 bit가 삭제된다.
 
-<img src="/img/그림1.png" width="50%" height="50%"></img>
+<img src="img/그림1.png" width="50%" height="50%"></img>
 
 예제 1) 
 ```cpp
