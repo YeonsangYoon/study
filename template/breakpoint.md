@@ -17,4 +17,4 @@ void breakpint() {
 * * *
 <img src="img/tmp2.png"></img>
 
-<img src="img/tmp1.png" width="72%"></img>
+<img src="img/tmp1.png" width="55%"></img>
