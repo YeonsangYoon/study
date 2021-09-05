@@ -8,7 +8,7 @@
 
 > 코드
 ```cpp
-void breakpint() {
+void breakpoint() {
     return; // breakpoint 찍을 위치
 }
 ```
