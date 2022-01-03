@@ -40,7 +40,7 @@
     - double을 float으로 변환하면 숫자가 반올림된다.
     - long long을 int로 변환하면 상위 bit가 삭제된다.
 
-<img src="/img/그림1.png" width="50%" height="50%"></img>
+<img src="img/그림1.png" width="50%" height="50%"></img>
 
 예제 1) 
 ```cpp
@@ -190,3 +190,5 @@ a의 주소값: 010FFD28
 
 ### 4) dynamic_cast
 static_cast가 해결하지 못한 class 상속관계에서의 형변환을 보다 안전하게 처리한다.
+
+추후 내용 수정
