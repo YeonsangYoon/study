@@ -1,62 +1,61 @@
 ﻿#include <bits/stdc++.h>
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
-
 using namespace std;
 
-struct node {
-	int idx;
-	int setCnt;
-};
-node parent[200002];
-vector<pair<int, int>> network;
+int f, ptr;
 map<string, int> id;
 
-int find(int a) {
-	if (parent[a].idx == a)
-		return a;
-	return find(parent[a].idx);
-}
-int merge(int a, int b) {
-	a = find(a);
-	b = find(b);
-	if (a == b)
-		return parent[a].setCnt;
+struct disJointSet {
+	int parent[200001];
+	int cnt[200001];
+	void init() {
+		for (int i = 1; i <= 2 * f + 1; i++) {
+			parent[i] = i;
+			cnt[i] = 1;
+		}
+	}
+	int find(int a) {
+		if (a == parent[a]) return a;
+		return parent[a] = find(parent[a]);
+	}
+	void merge(int a, int b) {
+		a = find(a); b = find(b);
+		if (a == b) return;
+		parent[a] = b;
+		cnt[b] += cnt[a];
+	}
+};
+disJointSet djs;
 
-	parent[a].idx = b;
-	parent[b].setCnt += parent[a].setCnt;
-	return parent[b].setCnt;
+int add_network(string A, string B) {
+	if (!id[A]) id[A] = ptr++;
+	if (!id[B]) id[B] = ptr++;
+
+	int a = id[A];  int b = id[B];
+
+	djs.merge(a, b);
+	return djs.cnt[djs.find(a)];
 }
+
 void init() {
-	vector<pair<int, int>>().swap(network);
-	map<string, int>().swap(id);
-
-	int n, cnt = 1;
-	cin >> n;
-	for (int i = 0; i < n; i++) {
-		string a, b;
-		cin >> a >> b;
-		if (!id[a])
-			id[a] = cnt++;
-		if (!id[b])
-			id[b] = cnt++;
-
-		network.push_back(make_pair(id[a], id[b]));
-	}
-	for (int i = 0; i <= 200001; i++) {
-		parent[i].idx = i;
-		parent[i].setCnt = 1;
-	}
+	cin >> f;
+	ptr = 1;
+	id = {};
+	djs.init();
 }
-int main() {
-	fastio;
 
+int main(void) {
+	fastio;
+	
 	int tc; cin >> tc;
 	for (int i = 0; i < tc; i++) {
 		init();
-		
-		for (auto& i : network) {
-			cout << merge(i.first, i.second) << '\n';
+
+		for (int j = 0; j < f; j++) {
+			string a, b;
+			cin >> a >> b;
+
+			cout << add_network(a, b) << '\n';
 		}
-		continue;
 	}
 }
