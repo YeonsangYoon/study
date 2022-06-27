@@ -2,55 +2,65 @@
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 using namespace std;
 
-#define MAX_INT 100000000
+#define Limit 10000000
 
 int a, b;
-bool isPrime[MAX_INT + 1];
+int isPrime[Limit + 1];
+int isPalindrome[Limit + 1];
+deque<int> cur;
 
-vector<int> get_prime() {
+void set_prime() {
 	memset(isPrime, true, sizeof(isPrime));
 	isPrime[0] = isPrime[1] = false;
 
-	vector<int> ret;
-
 	for (int i = 2; i <= b; i++) {
 		if (isPrime[i]) {
-			ret.push_back(i);
 			for (int j = i * 2; j <= b; j += i)
 				isPrime[j] = false;
 		}
 	}
-	return ret;
 }
 
-bool isPalindrome(int num) {
-	vector<int> v;
-	while (num > 0) {
-		v.push_back(num % 10);
-		num /= 10;
+void set_palindrome() {
+	int num = 0;
+	for (int& i : cur) {
+		num *= 10;
+		num += i;
 	}
+	if (num > b || (int)cur.size() >= 8) return;
 
-	int len = (int)v.size();
+	if (!cur.empty())
+		if (cur[0] != 0)
+			isPalindrome[num] = true;
 
-	for (int i = 0; i < (len / 2) + 1; i++) {
-		if (v[i] != v[len - i - 1])
-			return false;
+	for (int i = 0; i < 10; i++) {
+		cur.push_back(i);
+		cur.push_front(i);
+		set_palindrome();
+		cur.pop_back();
+		cur.pop_front();
 	}
-	return true;
+}
+
+void init() {
+	cin >> a >> b;
+	b = min(Limit, b);
 }
 
 int main(void) {
 	fastio;
-	cin >> a >> b;
-	
-	vector<int> primes = get_prime();
+	init();
 
-	for (int &i : primes) {
-		if (isPrime[i])
-			if (isPalindrome(i))
-				cout << i << '\n';
+	set_prime();
+	set_palindrome();
+	for (int i = 0; i < 10; i++) {
+		cur.push_back(i);
+		set_palindrome();
+		cur.pop_back();
 	}
-	cout << -1;
 
-	return 0;
+	for (int i = a; i <= b; i++)
+		if (isPrime[i] && isPalindrome[i])
+			cout << i << '\n';
+	cout << -1;
 }
