@@ -5,6 +5,21 @@ using namespace std;
 int n;
 int pre[1001], in[1001];
 
+void solve(int pl, int pr, int il, int ir) {
+	if (pl > pr || il > ir) return;
+
+	int root = pre[pl];
+	int idx;
+	for (idx = il; idx <= ir; idx++) if (in[idx] == root) break;
+	
+	int leftlen = idx - il;
+	int rightlen = ir - idx;
+
+	solve(pl + 1, pl + leftlen, il, idx - 1);
+	solve(pr - rightlen + 1, pr, idx + 1, ir);
+	cout << root << ' ';
+}
+
 void init() {
 	cin >> n;
 	for (int i = 1; i <= n; i++)
@@ -19,6 +34,7 @@ int main(void) {
 	int tc; cin >> tc;
 	for (int i = 0; i < tc; i++) {
 		init();
-
+		solve(1, n, 1, n);
+		cout << '\n';
 	}
 }
