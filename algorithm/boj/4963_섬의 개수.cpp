@@ -1,4 +1,16 @@
-﻿#include <bits/stdc++.h>
+﻿/**********************************************************************
+작성일 : 2022-8-18
+문제 :
+	정사각형으로 이루어져 있는 섬과 바다 지도가 주어질 때,
+	섬의 개수를 세는 프로그램을 구하라.
+풀이 :
+	bfs를 이용하여 섬의 개수를 세었다.
+시간 제한 : 1초
+메모리 제한 : 128MB
+예상 시간복잡도 : 
+TEST 결과 : 통과
+**********************************************************************/
+#include <bits/stdc++.h>
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 using namespace std;
 
@@ -46,7 +58,7 @@ int solve() {
 							continue;
 
 						visited[nr][nc] = true;
-						q.push({ nr, nr });
+						q.push({ nr, nc });
 					}
 				}
 				cnt++;
