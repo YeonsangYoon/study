@@ -3,21 +3,50 @@
 using namespace std;
 
 int n;
-vector<int> arr1, arr2;
+int mapping[100001], arr[100001];
+vector<int> idx_list;
+
+int get_idx(int num) {
+	int l = 0, r = (int)idx_list.size();
+
+	while (l < r) {
+		int mid = (l + r) / 2;
+
+		if (idx_list[mid] >= num)
+			r = mid;
+		else
+			l = mid + 1;
+	}
+	return l;
+}
+
+int LIS() {
+	for (int i = 1; i <= n; i++) {
+		int idx = get_idx(arr[i]);
+
+		if ((int)idx_list.size() > idx)
+			idx_list[idx] = arr[i];
+		else
+			idx_list.push_back(arr[i]);
+	}
+	return (int)idx_list.size();
+}
 
 void init() {
 	cin >> n;
-	for (int i = 0; i < n; i++) {
-		int num; cin >> num;
-		arr1.push_back(num);
+	for (int i = 1; i <= n; i++) {
+		int idx; cin >> idx;
+		mapping[idx] = i;
 	}
-	for (int i = 0; i < n; i++) {
-		int num; cin >> num;
-		arr2.push_back(num);
+	for (int i = 1; i <= n; i++) {
+		int idx; cin >> idx;
+		arr[i] = mapping[idx];
 	}
 }
 
 int main(void){
 	fastio;
 	init();
+
+	cout << LIS();
 }
