@@ -1,20 +1,88 @@
-﻿// 4196_도미노.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
+﻿#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
+using namespace std;
 
-#include <iostream>
+int n, m;
+int sccId[100001], inDegree[100001];
+bool visited[100001];
+stack<int> st;
+vector<int> adjlist[100001], radjlist[100001];
 
-int main()
-{
-    std::cout << "Hello World!\n";
+void dfs(int cur) {
+	visited[cur] = true;
+
+	for (int& nex : adjlist[cur]) {
+		if (!visited[nex])
+			dfs(nex);
+	}
+	st.push(cur);
 }
 
-// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
-// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
+void set_id(int cur, int id) {
+	visited[cur] = true;
+	sccId[cur] = id;
 
-// 시작을 위한 팁: 
-//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
-//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
-//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
-//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
-//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
-//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
+	for (int& nex : radjlist[cur]) {
+		if (!visited[nex])
+			set_id(nex, id);
+	}
+}
+
+int set_scc() {
+	for (int i = 1; i <= n; i++) {
+		if (!visited[i])
+			dfs(i);
+	}
+	memset(visited, false, sizeof(visited));
+
+	int id = 1;
+	while (!st.empty()) {
+		int now = st.top(); st.pop();
+		if (sccId[now] == 0) {
+			set_id(now, id);
+			id++;
+		}
+	}
+
+	for (int i = 1; i <= n; i++) {
+		for (int& j : adjlist[i]) {
+			if (sccId[i] != sccId[j])
+				inDegree[sccId[j]]++;
+		}
+	}
+	return id - 1;
+}
+
+void init() {
+	memset(sccId, 0, sizeof(sccId));
+	memset(inDegree, 0, sizeof(inDegree));
+	memset(visited, false, sizeof(visited));
+
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++) {
+		adjlist[i].clear();
+		radjlist[i].clear();
+	}
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		cin >> x >> y;
+		adjlist[x].push_back(y);
+		radjlist[y].push_back(x);
+	}
+}
+
+int main(void) {
+	fastio;
+
+	int tc; cin >> tc;
+	for (int i = 0; i < tc; i++) {
+		init();
+		int sccCnt = set_scc();
+
+		int cnt = 0;
+		for (int i = 1; i <= sccCnt; i++)
+			if (inDegree[i] == 0)
+				cnt++;
+		cout << cnt << '\n';
+	}
+}
