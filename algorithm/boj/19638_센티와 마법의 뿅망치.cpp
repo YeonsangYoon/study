@@ -6,26 +6,18 @@ int n, h, t;
 bool ans;
 priority_queue<int> pq;
 
-void init() {
-	cin >> n >> h;
-	for (int i = 0; i < n; i++) {
-		int tmp; cin >> tmp;
-		pq.push(tmp);
-	}
-}
-
 int solve() {
 	for (int i = 1; i <= t; i++) {
 		int now = pq.top(); pq.pop();
-
-		if (now >= h) {
-			pq.push(now / 2);
-		}
-		else {
+		if (now < h) {
 			ans = true;
 			return i - 1;
 		}
+		else if (now > 1)
+			now /= 2;
+		pq.push(now);
 	}
+
 	if (pq.top() < h) {
 		ans = true;
 		return t;
@@ -36,11 +28,19 @@ int solve() {
 	}
 }
 
+void init() {
+	cin >> n >> h >> t;
+	for (int i = 0; i < n; i++) {
+		int tmp; cin >> tmp;
+		pq.push(tmp);
+	}
+}
+
 int main(void) {
 	fastio;
 	init();
-	int result = solve();
 
+	int result = solve();
 	if (ans)
 		cout << "YES\n";
 	else
