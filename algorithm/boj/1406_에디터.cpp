@@ -20,16 +20,28 @@ node* get_node(char ch) {
 
 void insert(char ch) {
 	node* newNode = get_node(ch);
-	node* tmp = cursor->prev;
-	tmp->next = newNode;
-	newNode->prev = tmp;
-	newNode->next = cursor;
-	cursor->prev = newNode;
+	node* tmp = cursor->next;
+	cursor->next = newNode;
+	newNode->prev = cursor;
+	newNode->next = tmp;
+	tmp->prev = newNode;
+	cursor = newNode;
 }
 
-void mode(int dir) {
-	if (dir == 1) { // left
+void move_node(int dir) {
+	if (dir == 1 && cursor->prev) // left
+		cursor = cursor->prev;
+	else if (dir == -1 && cursor->next->next) // right
+		cursor = cursor->next;
+}
 
+void delete_node() {
+	if (cursor != &head) {
+		node* p = cursor->prev;
+		node* n = cursor->next;
+		p->next = n;
+		n->prev = p;
+		cursor = p;
 	}
 }
 
@@ -38,15 +50,46 @@ void init() {
 	head.prev = NULL;
 	tail.next = NULL;
 	tail.prev = &head;
+	cursor = &head;
 
 	string s;
 	cin >> s >> m;
 	n = s.size();
+	for (int i = 0; i < n; i++) {
+		insert(s[i]);
+	}
+}
+
+void print_node() {
+	node* cur = head.next;
+	while (cur->next) {
+		cout << cur->c;
+		cur = cur->next;
+	}
 }
 
 int main(void) {
 	fastio;
 	init();
 
+	for (int i = 0; i < m; i++) {
+		char op;
+		cin >> op;
 
+		if (op == 'P') {
+			char ch; cin >> ch;
+			insert(ch);
+		}
+		else if (op == 'L') {
+			move_node(1);
+		}
+		else if (op == 'D') {
+			move_node(-1);
+		}
+		else if (op == 'B') {
+			delete_node();
+		}
+	}
+
+	print_node();
 }
