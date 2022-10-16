@@ -2,8 +2,8 @@
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 using namespace std;
 
-#define MOD 1000
 typedef long long ll;
+#define MOD 1000
 
 struct matrix {
 	vector<vector<int>> M;
@@ -15,7 +15,7 @@ struct matrix {
 		int n = a.M.size(); 
 		matrix ret(n);
 		for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) 
-			ret[i][j] = (a[i][j] + b[i][j]) % 1000;
+			ret[i][j] = (a[i][j] + b[i][j]) % MOD;
 		return ret;
 	}
 	friend matrix operator * (matrix a, matrix b) {
@@ -25,7 +25,7 @@ struct matrix {
 			for (int j = 0; j < n; j++) {
 				for (int k = 0; k < n; k++) {
 					ret[i][j] += a[i][k] * b[k][j];
-					ret[i][j] %= 1000;
+					ret[i][j] %= MOD;
 				}
 			}
 		}
@@ -33,7 +33,7 @@ struct matrix {
 	}
 };
 
-int n, Pmax = 39;
+int n;
 ll p;
 matrix A, E;
 
@@ -46,15 +46,24 @@ void print_matrix(matrix& m) {
 	}
 }
 
-matrix _pow(matrix& m, ll b) {
+matrix _pow(matrix m, ll b) {
 	matrix ret = E;
 	while (b) {
-		if (b & 1)
+		if (b % 2)
 			ret *= m;
 		m *= m;
 		b >>= 1;
 	}
 	return ret;
+}
+
+matrix solve(matrix m, ll b) {
+	if (b == 1)
+		return m;
+	else if (b % 2)
+		return solve(m, b / 2 ) * (E + _pow(m, b / 2)) + _pow(m, b);
+	else
+		return solve(m, b / 2) * (E + _pow(m, b / 2));
 }
 
 void init() {
@@ -63,21 +72,17 @@ void init() {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			cin >> a[i][j];
+			a[i][j] %= MOD;
 			e[i][j] = (i == j) ? 1 : 0;
 		}
 	}
 	A = a; E = e;
 }
 
-matrix solve(matrix m, ll b) {
-	if (b == 1)
-		return E;
-
-	
-}
-
 int main(void) {
 	fastio;
 	init();
 
+	matrix result = solve(A, p);
+	print_matrix(result);
 }
