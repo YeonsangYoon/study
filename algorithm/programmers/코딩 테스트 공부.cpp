@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#define MAX 1000000000
 using namespace std;
 
 struct node {
@@ -9,44 +8,32 @@ struct node {
     }
 };
 
-vector<vector<int>> dp(151, vector<int>(151, MAX));
+bool visited[2000][2000];
 
 int solution(int alp, int cop, vector<vector<int>> problems) {
     int alpGoal = 0, copGoal = 0;
-    for (auto& a : problems) {
-        alpGoal = max(alpGoal, a[0]);
-        copGoal = max(copGoal, a[1]);
+    for (auto& p : problems) {
+        alpGoal = max(alpGoal, p[0]);
+        copGoal = max(copGoal, p[1]);
     }
-    
+
     priority_queue<node> pq;
     pq.push({ alp, cop, 0 });
-    dp[alp][cop] = 0;
 
     while (!pq.empty()) {
         node now = pq.top(); pq.pop();
         if (now.a >= alpGoal && now.c >= copGoal)
             return now.t;
+        else if (visited[now.a][now.c])
+            continue;
 
+        visited[now.a][now.c] = true;
         for (auto& p : problems) {
             if (now.a >= p[0] && now.c >= p[1]) {
                 pq.push({ now.a + p[2], now.c + p[3], now.t + p[4] });
             }
-            else if (now.a < p[0] && now.c < p[1]) {
-                pq.push({ p[0], p[1], now.t + p[0] - now.a + p[1] - now.c });
-            }
-            else if (now.a < p[0]) {
-                pq.push({ p[0], now.c, now.t + p[0] - now.a });
-            }
-            else if (now.c < p[1]) {
-                pq.push({ now.a, p[1], now.t + p[1] - now.c });
-            }
         }
+        pq.push({ now.a + 1, now.c, now.t + 1 });
+        pq.push({ now.a, now.c + 1, now.t + 1 });
     }
 }
-
-/*
-int main(void) {
-    cout << solution(10, 10, { { 10, 15, 2, 1, 2 }, { 20, 20, 3, 3, 4 } }) << '\n';
-    cout << solution(0, 0, { {0, 0, 2, 1, 2}, {4, 5, 3, 1, 2}, {4, 11, 4, 0, 2}, {10, 4, 0, 4, 2} });
-}
-*/
