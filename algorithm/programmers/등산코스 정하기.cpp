@@ -1,58 +1,56 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct edge {
+struct node {
 	int u, w;
+	bool operator<(const node& a) const {
+		return a.w < w;
+	}
 };
 
 int n;
 int kind[50001];	// 0 : 쉼터, 1 : 출입구, 2 : 산봉우리
-bool visited[50001];
-vector<int> ans = { 50001, 100000000 };
-vector<vector<edge>> adjlist;
-
-bool cmp(vector<int>& a, vector<int>& b) {
-	return a[2] < b[2];
-}
-
-void dfs(int cur, int its, int start) {
-	if (its >= ans[1] || kind[cur] == 2) {
-		return;
-	}
-	else if (kind[cur] == 1) {
-		if (its < ans[1])
-			ans = { start, its };
-		return;
-	}
-
-	for (edge& e : adjlist[cur]) {
-		if (!visited[e.u]) {
-			visited[e.u] = true;
-			dfs(e.u, max(its, e.w), start);
-			visited[e.u] = false;
-		}
-	}
-}
+vector<int> dp;
+vector<vector<node>> adjlist;
 
 vector<int> solution(int n, vector<vector<int>> paths, vector<int> gates, vector<int> summits) {
-	// init
+	/* init */
 	sort(summits.begin(), summits.end());
-	sort(paths.begin(), paths.end(), cmp);
-	adjlist = vector<vector<edge>>(n + 1, vector<edge>());
-	for (auto& p : paths) {
-		adjlist[p[0]].push_back({ p[1], p[2] });
-		adjlist[p[1]].push_back({ p[0], p[2] });
-	}
+	adjlist = vector<vector<node>>(n + 1, vector<node>());
+	dp = vector<int>(n + 1, 1000000000);
 	for (int& g : gates) kind[g] = 1;
 	for (int& s : summits) kind[s] = 2;
-
-	for (int& s : summits) {
-		if (ans[1] == paths[0][2]) break;
-		visited[s] = true;
-		kind[s] = -1;
-		dfs(s, 0, s);
-		kind[s] = 2;
-		visited[s] = false;
+	for (auto& p : paths) {
+		if (kind[p[0]] != 2 && kind[p[1]] != 1)
+			adjlist[p[0]].push_back({ p[1], p[2] });
+		if (kind[p[0]] != 1 && kind[p[1]] != 2)
+			adjlist[p[1]].push_back({ p[0], p[2] });
 	}
-	return ans;
+	/********/
+
+	priority_queue<node> pq;
+	for (int& g : gates) {
+		pq.push({ g, 0 });
+		dp[g] = 0;
+	}
+
+	while (!pq.empty()) {
+		node now = pq.top(); pq.pop();
+
+		if (dp[now.u] < now.w) continue;
+		for (node& nex : adjlist[now.u]) {
+			if (dp[nex.u] > max(now.w, nex.w)) {
+				dp[nex.u] = max(now.w, nex.w);
+				pq.push({ nex.u, dp[nex.u] });
+			}
+		}
+	}
+	int i = 0, its = 1000000000;
+	for (int& s : summits) {
+		if (dp[s] < its) {
+			i = s;
+			its = dp[s];
+		}
+	}
+	return { i , its };
 }
